@@ -1,0 +1,11 @@
+# Railway build steps (read by Nixpacks).
+# These live here — not in package.json — because package.json is regenerated
+# by Figma Make exports, which strip any deploy-specific scripts/deps.
+# Using --no-frozen-lockfile so the build never breaks if pnpm-lock.yaml is
+# missing or out of sync with package.json.
+
+[phases.install]
+cmds = ["pnpm install --no-frozen-lockfile"]
+
+[phases.build]
+cmds = ["pnpm add serve@14.2.4", "pnpm run build"]
