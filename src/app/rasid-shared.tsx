@@ -84,7 +84,10 @@ export const OVERVIEW_KPIS = [
   { label: "إجمالي المواقع",   value: "24,983", change: "+12%", up: true,  icon: Globe,    color: GOLD    },{ label: "إجمالي الفحوصات", value: "9,945",  change: "+8%",  up: true,  icon: Activity, color: TEAL    },{ label: "مواقع لا تعمل",   value: "10,839", change: "+2%",  up: false, icon: WifiOff,  color: C_RED },{ label: "إجمالي المنتجات", value: "9,945",  change: "+5%",  up: true,  icon: Database, color: C_GRN },
 ];
 export const COMPLIANCE_KPIS = [
-  { label: "ممتثل",        value: "911",   pct: 9,  color: C_GRN, textColor: C_EMR },{ label: "غير ممتثل",   value: "7,994", pct: 80, color: C_RED, textColor: "#D9728A" },{ label: "ممتثل جزئياً",value: "1,040", pct: 11, color: C_AMB, textColor: "#DFA947" },
+  { label: "ممتثل",        value: "911",   pct: 9,  color: C_GRN, textColor: C_EMR,     status: "compliant"     as ComplianceStatus, icon: CheckCircle2,  en: "COMPLIANT",   sub: "متوافق بالكامل" },
+  { label: "غير ممتثل",   value: "7,994", pct: 80, color: C_RED, textColor: "#D9728A", status: "non-compliant" as ComplianceStatus, icon: AlertCircle,   en: "NON-COMPLIANT", sub: "يتطلب إجراءً" },
+  { label: "ممتثل جزئياً",value: "1,040", pct: 11, color: C_AMB, textColor: "#DFA947", status: "partial"       as ComplianceStatus, icon: AlertTriangle, en: "PARTIAL",     sub: "امتثال جزئي" },
+  { label: "لا يعمل",      value: "518",   pct: 5,  color: "#8593AD", textColor: "#AEBAD0", status: "inactive"      as ComplianceStatus, icon: WifiOff,       en: "NOT WORKING", sub: "غير متاح للفحص" },
 ];
 export const TREND_DATA = [
   { month: "يناير",  ممتثل: 820, جزئياً: 980  },{ month: "فبراير", ممتثل: 845, جزئياً: 1005 },{ month: "مارس",   ممتثل: 862, جزئياً: 1015 },{ month: "أبريل",  ممتثل: 878, جزئياً: 1025 },{ month: "مايو",   ممتثل: 895, جزئياً: 1033 },{ month: "يونيو",  ممتثل: 911, جزئياً: 1040 },
@@ -278,11 +281,14 @@ export function RasidLogo({ variant = "gold", className = "", animate = false, s
   const src = variant === "wordmark" ? rasidLogoWordmark : tone === "navy" ? rasidLogoLight : rasidLogoGold;
   return (
     <div className="relative inline-block rl-anim" style={{ ...xs }}>
+      {/* Pulsing gold glow halo (extends beyond, not clipped) */}
       <span className="rl-glow" aria-hidden />
-      <ImageWithFallback src={src} alt="منصة راصد"
-        className={`relative object-contain select-none block ${className}`} />
-      <span className="rl-sweep" aria-hidden
-        style={{ WebkitMaskImage: `url(${src})`, maskImage: `url(${src})` }} />
+      {/* Clip wrapper for the reliable light-sweep overlay */}
+      <div className="relative inline-block overflow-hidden align-middle">
+        <ImageWithFallback src={src} alt="منصة راصد"
+          className={`relative object-contain select-none block ${className}`} />
+        <span className="rl-sweep2" aria-hidden />
+      </div>
     </div>
   );
 }
@@ -397,34 +403,60 @@ export function SmallKPI({ label, value, icon: Icon, color, delay = 0 }: {
     </div>
   );
 }
-export function ComplianceCard({ label, value, pct, color, textColor }: typeof COMPLIANCE_KPIS[0]) {
-  const r = 24; const circ = 2 * Math.PI * r; const dash = (pct / 100) * circ;
+export function ComplianceCard({ label, value, pct, color, textColor, status, icon: Icon, en, sub, index = 0 }:
+  typeof COMPLIANCE_KPIS[0] & { index?: number }) {
+  const r = 22; const circ = 2 * Math.PI * r; const dash = (pct / 100) * circ;
+  const Ico = (Icon as React.ElementType) || CheckCircle2;
   return (
-    <PCard goldTop className="p-5 hover:translate-y-[-2px] transition-all duration-200 cursor-default">
-      <div className="flex items-center justify-between gap-4">
-        <div className="min-w-0">
-          <div style={{ color: textColor, animation: "count-pop 0.4s ease-out 0.15s both" }}
-          className="text-4xl font-extrabold mb-1 tabular-nums">
-          <CountUp target={value} />
+    <div className="compliance-card group relative rounded-2xl overflow-hidden cursor-pointer"
+      style={{ ["--cc" as any]: color, animationDelay: `${index * 0.09}s`,
+        background: `linear-gradient(160deg, color-mix(in srgb, var(--card) 90%, ${color}) 0%, var(--card) 58%)`,
+        border: `1px solid color-mix(in srgb, ${color} 38%, var(--border))` }}
+      onClick={() => (window as any)._rasidOpenDrill?.(status, `المواقع — ${label}`, color, textColor)}>
+      {/* Calm status top accent line */}
+      <div className="absolute top-0 inset-x-0 h-[2.5px] z-20"
+        style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
+      {/* Subtle status glow (low opacity, no noise) */}
+      <span className="cc-glow" aria-hidden />
+      <div className="relative z-10 p-4">
+        {/* Header: identity (icon + status name + EN tag)  |  progress ring */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="cc-icon w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: `${color}1A`, border: `1px solid ${color}3A` }}>
+              <Ico size={18} style={{ color }} />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[14px] font-black text-foreground leading-tight truncate">{label}</div>
+              <div className="text-[8.5px] font-bold tracking-[0.16em] mt-0.5" style={{ color }}>{en}</div>
+            </div>
           </div>
-          <div className="text-sm text-muted-foreground">{label}</div>
-          <div className="flex items-center gap-1.5 mt-2">
-          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-          <span className="text-xs text-muted-foreground">{pct}% من الإجمالي</span>
+          <div className="relative w-12 h-12 flex-shrink-0">
+            <svg width="48" height="48" viewBox="0 0 56 56" style={{ transform: "rotate(-90deg)" }}>
+              <circle cx="28" cy="28" r={r} fill="none" stroke={color} strokeOpacity="0.18" strokeWidth="4.5" />
+              <circle cx="28" cy="28" r={r} fill="none" stroke={color} strokeWidth="4.5" strokeLinecap="round"
+                className="cc-ring"
+                style={{ strokeDasharray: circ, strokeDashoffset: circ, ["--off" as any]: circ - dash }} />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black tabular-nums" style={{ color }}>{pct}%</div>
           </div>
         </div>
-        <div className="relative w-16 h-16 flex-shrink-0">
-          <svg width="64" height="64" viewBox="0 0 64 64" style={{ transform: "rotate(-90deg)" }}>
-          <circle cx="32" cy="32" r={r} fill="none" stroke={color} strokeOpacity="0.15" strokeWidth="6" />
-          <circle cx="32" cy="32" r={r} fill="none" stroke={color} strokeWidth="6"
-          strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" />
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-          <span style={{ color: textColor}} className="text-sm font-bold">{pct}%</span>
+        {/* Main number */}
+        <div className="mt-3 flex items-end gap-2">
+          <div className="text-[34px] font-black tabular-nums leading-none"
+            style={{ color, animation: "count-pop 0.5s ease-out 0.2s both" }}>
+            <CountUp target={value} />
           </div>
+          <span className="text-[11px] text-muted-foreground mb-1">موقع</span>
+        </div>
+        {/* Short description */}
+        <div className="text-[11px] text-muted-foreground mt-1">{sub}</div>
+        {/* Animated progress accent */}
+        <div className="mt-2.5 h-[5px] rounded-full overflow-hidden" style={{ background: `${color}1A` }}>
+          <div className="h-full rounded-full cc-bar" style={{ width: `${pct}%`, background: color }} />
         </div>
       </div>
-    </PCard>
+    </div>
   );
 }
 export const BANNER_THEMES: Record<BgCat, { from: string; via: string; accent: string; gridColor: string }> = {
@@ -506,52 +538,52 @@ export function HeroBanner({ title, subtitle, badge, actions, page }: {
 export function CinematicSharedLayers({ acc }: { acc: string }) {
   return (
     <>
-      {/* Large breathing glow orbs — clearly perceivable atmosphere */}
-      <div style={{ position:"absolute", top:"-14%", right:"2%", width:"620px", height:"620px",
-          background:`radial-gradient(ellipse, ${acc}26 0%, transparent 62%)`,
-          animation:"mesh-drift 22s ease-in-out infinite" }} />
-      <div style={{ position:"absolute", bottom:"4%", left:"4%", width:"460px", height:"460px",
-          background:`radial-gradient(ellipse, ${GOLD}1A 0%, transparent 66%)`,
-          animation:"mesh-drift 28s ease-in-out 3s infinite reverse" }} />
+      {/* Large breathing glow orbs — bold, clearly perceivable atmosphere */}
+      <div style={{ position:"absolute", top:"-12%", right:"-2%", width:"680px", height:"680px",
+          background:`radial-gradient(ellipse, ${acc}40 0%, ${acc}14 35%, transparent 64%)`,
+          animation:"mesh-drift 20s ease-in-out infinite" }} />
+      <div style={{ position:"absolute", bottom:"0%", left:"-4%", width:"520px", height:"520px",
+          background:`radial-gradient(ellipse, ${GOLD}30 0%, transparent 66%)`,
+          animation:"mesh-drift 26s ease-in-out 3s infinite reverse" }} />
       {/* Moving mesh-gradient field */}
-      <div style={{ position:"absolute", top:"22%", left:"24%", width:"560px", height:"460px",
-          background:`radial-gradient(ellipse, ${acc}1E 0%, transparent 60%)`,
-          filter:"blur(8px)", animation:"mesh-drift 26s ease-in-out 1s infinite" }} />
-      {/* Digital grid layer — visible but calm */}
-      <div style={{ position:"absolute", inset:0, opacity:0.07,
+      <div style={{ position:"absolute", top:"20%", left:"22%", width:"600px", height:"500px",
+          background:`radial-gradient(ellipse, ${acc}2E 0%, transparent 60%)`,
+          filter:"blur(8px)", animation:"mesh-drift 24s ease-in-out 1s infinite" }} />
+      {/* Digital grid layer — clearly visible, center-focused */}
+      <div style={{ position:"absolute", inset:0, opacity:0.13,
           backgroundImage:`linear-gradient(${acc} 1px, transparent 1px), linear-gradient(90deg, ${acc} 1px, transparent 1px)`,
-          backgroundSize:"44px 44px",
-          maskImage:"radial-gradient(ellipse at center, black 30%, transparent 85%)",
-          WebkitMaskImage:"radial-gradient(ellipse at center, black 30%, transparent 85%)" }} />
-      {/* RTL data-stream light trails */}
-      {[0,1,2,3].map(i => (
-        <div key={`str-${i}`} style={{ position:"absolute", height:"1.5px",
-          width:`${180+i*70}px`, top:`${18+i*20}%`, right:0,
-          background:`linear-gradient(to left, transparent, ${acc}55, ${GOLD}40, transparent)`,
-          boxShadow:`0 0 8px ${acc}40`,
-          animation:`stream-rtl ${5+i*1.1}s linear ${i*1.4}s infinite` }} />
+          backgroundSize:"46px 46px",
+          maskImage:"radial-gradient(ellipse at center, black 35%, transparent 88%)",
+          WebkitMaskImage:"radial-gradient(ellipse at center, black 35%, transparent 88%)" }} />
+      {/* RTL data-stream light trails — bright & glowing */}
+      {[0,1,2,3,4].map(i => (
+        <div key={`str-${i}`} style={{ position:"absolute", height:"2px",
+          width:`${200+i*60}px`, top:`${14+i*17}%`, right:0,
+          background:`linear-gradient(to left, transparent, ${acc}AA, ${GOLD}70, transparent)`,
+          boxShadow:`0 0 10px ${acc}70`,
+          animation:`stream-rtl ${4.5+i*0.9}s linear ${i*1.2}s infinite` }} />
       ))}
-      {/* Floating data particles */}
-      {[0,1,2,3,4,5,6,7].map(i => (
+      {/* Floating data particles — larger, brighter */}
+      {[0,1,2,3,4,5,6,7,8,9].map(i => (
         <div key={`pt-${i}`} style={{ position:"absolute",
-          width:`${3+(i%3)}px`, height:`${3+(i%3)}px`, borderRadius:"50%",
-          left:`${(i*23+6)%92}%`, bottom:`${(i*16+4)%42}%`,
-          background: i%2===0 ? GOLD : acc, opacity:0.7,
-          boxShadow:`0 0 8px ${i%2===0 ? GOLD : acc}`,
-          animation:`particle-up ${6+i*1.1}s ease-in ${i*0.7}s infinite` }} />
+          width:`${4+(i%3)}px`, height:`${4+(i%3)}px`, borderRadius:"50%",
+          left:`${(i*23+6)%92}%`, bottom:`${(i*16+4)%46}%`,
+          background: i%2===0 ? GOLD : acc, opacity:0.9,
+          boxShadow:`0 0 12px ${i%2===0 ? GOLD : acc}, 0 0 4px ${i%2===0 ? GOLD : acc}`,
+          animation:`particle-up ${5.5+i*0.9}s ease-in ${i*0.6}s infinite` }} />
       ))}
       {/* Slow horizontal scan beams — clearly visible cinematic motion */}
-      <div style={{ position:"absolute", top:0, bottom:0, width:"200px",
-          background:`linear-gradient(90deg, transparent, ${acc}1E, ${acc}30, ${acc}1E, transparent)`,
-          animation:"bg-scan-x 10s linear infinite" }} />
-      <div style={{ position:"absolute", top:0, bottom:0, width:"140px",
-          background:`linear-gradient(90deg, transparent, ${GOLD}18, ${GOLD}24, ${GOLD}18, transparent)`,
-          animation:"bg-scan-x 14s linear 5s infinite" }} />
+      <div style={{ position:"absolute", top:0, bottom:0, width:"240px",
+          background:`linear-gradient(90deg, transparent, ${acc}38, ${acc}55, ${acc}38, transparent)`,
+          animation:"bg-scan-x 9s linear infinite" }} />
+      <div style={{ position:"absolute", top:0, bottom:0, width:"160px",
+          background:`linear-gradient(90deg, transparent, ${GOLD}30, ${GOLD}44, ${GOLD}30, transparent)`,
+          animation:"bg-scan-x 13s linear 4s infinite" }} />
       {/* Corner depth gradients */}
-      <div style={{ position:"absolute", top:0, right:0, width:"40%", height:"40%",
-          background:`radial-gradient(ellipse at top right, ${acc}1C, transparent 65%)` }} />
-      <div style={{ position:"absolute", bottom:0, left:0, width:"32%", height:"34%",
-          background:`radial-gradient(ellipse at bottom left, ${GOLD}12, transparent 70%)` }} />
+      <div style={{ position:"absolute", top:0, right:0, width:"42%", height:"42%",
+          background:`radial-gradient(ellipse at top right, ${acc}2A, transparent 65%)` }} />
+      <div style={{ position:"absolute", bottom:0, left:0, width:"34%", height:"36%",
+          background:`radial-gradient(ellipse at bottom left, ${GOLD}1C, transparent 70%)` }} />
       {/* Edge vignette to focus content & deepen atmosphere (mode-adaptive) */}
       <div className="bg-vignette" style={{ position:"absolute", inset:0 }} />
     </>

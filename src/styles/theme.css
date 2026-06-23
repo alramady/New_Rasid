@@ -397,6 +397,50 @@ button:not(.no-press):active {
 .tint-teal { background: rgba(61,177,172,0.10); }
 .ring-soft { box-shadow: 0 0 0 1px rgba(197,165,90,0.14); }
 
+/* ─── Signature compliance status cards ─────────────────── */
+.compliance-card {
+  box-shadow: var(--card-shadow);
+  animation: reveal-up-lg 0.55s cubic-bezier(0.22,0.61,0.36,1) both;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.30s ease, border-color 0.30s ease;
+}
+.compliance-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow-lg), 0 0 26px -10px var(--cc);
+  border-color: var(--cc) !important;
+}
+/* color-keyed ambient glow — gentle, governmental, no noise */
+.cc-glow {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: radial-gradient(ellipse at 80% -20%, var(--cc) 0%, transparent 55%);
+  opacity: 0.06;
+  animation: cc-pulse 4s ease-in-out infinite;
+}
+@keyframes cc-pulse { 0%,100% { opacity: 0.05; } 50% { opacity: 0.13; } }
+/* animated ring draw to target percentage (per-instance via --off) */
+.cc-ring {
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--cc) 55%, transparent));
+  animation: cc-ring-draw 1.2s cubic-bezier(0.22,0.61,0.36,1) 0.25s both;
+}
+@keyframes cc-ring-draw { to { stroke-dashoffset: var(--off); } }
+/* animated linear status accent (RTL grow) */
+.cc-bar { transform-origin: right; animation: cc-bar-grow 1.1s cubic-bezier(0.22,0.61,0.36,1) 0.3s both; }
+@keyframes cc-bar-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* icon container micro-motion on hover */
+.cc-icon { transition: transform 0.26s cubic-bezier(0.34,1.56,0.64,1); }
+.compliance-card:hover .cc-icon { transform: scale(1.1) rotate(-4deg); }
+/* breakdown distribution-bar segment grow */
+.cc-seg { transform-origin: right; animation: cc-bar-grow 0.9s cubic-bezier(0.22,0.61,0.36,1) both; }
+
+/* ─── Premium filter chip interactions ──────────────────── */
+.chip {
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.22s ease, background-color 0.22s ease,
+              border-color 0.22s ease, color 0.22s ease;
+  animation: reveal-up-lg 0.45s cubic-bezier(0.22,0.61,0.36,1) both;
+}
+.chip:hover { transform: translateY(-2px); }
+.chip:active { transform: translateY(0) scale(0.95); }
+
 /* ─── Slow cinematic mesh-gradient drift ────────────────── */
 @keyframes mesh-drift {
   0%   { transform: translate(0,0) scale(1); }
@@ -450,42 +494,48 @@ button:not(.no-press):active {
   0%, 100% { opacity: 0.40; transform: scale(0.88); }
   50%      { opacity: 0.95; transform: scale(1.16); }
 }
-/* Light sweep that travels along the calligraphy strokes (masked to the glyph) */
-.rl-sweep {
+/* Reliable light sweep — an absolutely-positioned gradient bar that slides across
+   the logo, clipped by the wrapper's overflow:hidden. No mask, cannot fail silently. */
+.rl-sweep2 {
   position: absolute;
-  inset: 0;
-  z-index: 2;
+  top: 0; bottom: 0;
+  width: 55%;
+  left: -60%;
+  z-index: 3;
   pointer-events: none;
-  -webkit-mask-size: contain; mask-size: contain;
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  -webkit-mask-position: center; mask-position: center;
-  background: linear-gradient(100deg, transparent 38%, rgba(255,250,225,0.55) 47%, rgba(255,255,255,0.95) 50%, rgba(255,250,225,0.55) 53%, transparent 62%);
-  background-size: 220% 100%;
-  background-repeat: no-repeat;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,250,225,0.45) 38%, rgba(255,255,255,0.92) 50%, rgba(255,250,225,0.45) 62%, transparent 100%);
   mix-blend-mode: screen;
-  animation: rl-sweep-move 3s ease-in-out 0.3s infinite;
+  filter: blur(1px);
+  animation: rl-sweep2 3s ease-in-out 0.4s infinite;
 }
-@keyframes rl-sweep-move {
-  0%        { background-position: 180% 0; }
-  55%, 100% { background-position: -90% 0; }
+@keyframes rl-sweep2 {
+  0%        { left: -60%; }
+  55%, 100% { left: 120%; }
 }
 /* ────────────────────────────────────────────────────────── */
 
+/* Reduced-motion: TARGETED, not nuclear. We keep gentle ambient brand/background
+   motion (low-risk opacity & small-scale loops) so the platform still feels alive,
+   but we disable large entrance transforms, parallax, hover lifts and scroll reveals
+   that can trigger vestibular discomfort. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-  .pcard-interactive:hover { transform: none; }
+  scroll-behavior: auto;
+  .pcard-interactive:hover { transform: none !important; }
   .pcard-interactive::after { display: none; }
-  .cs:hover, .glass-card:hover { transform: none; }
-  button:not(.no-press):active { transform: none; }
-  .stagger > *, .reveal, .reveal-scroll { animation: none !important; opacity: 1 !important; }
-  .rl-anim { animation: none !important; }
-  .rl-sweep { display: none !important; }
-  .rl-glow { animation: none !important; opacity: 0.4 !important; transform: none !important; }
+  .cs:hover, .glass-card:hover { transform: none !important; }
+  button:not(.no-press):active { transform: none !important; }
+  /* entrance reveals: show instantly, no slide */
+  .stagger > *, .reveal, .reveal-scroll { animation: none !important; opacity: 1 !important; transform: none !important; }
+  /* keep logo glow/breathe (calm, on-brand); slow only the fast sweep */
+  .rl-sweep2 { animation-duration: 7s !important; }
+  /* compliance cards: show instantly, no entrance/hover transform; keep gentle glow */
+  .compliance-card { animation: none !important; opacity: 1 !important; }
+  .compliance-card:hover { transform: none !important; }
+  .compliance-card:hover .cc-icon { transform: none !important; }
+  .cc-bar, .cc-seg { animation: none !important; transform: none !important; }
+  .cc-ring { animation: none !important; stroke-dashoffset: var(--off) !important; }
+  /* background scan beams slowed but still alive */
+  [style*="bg-scan-x"] { animation-duration: 24s !important; }
 }
 
 :root {
@@ -634,9 +684,14 @@ button:not(.no-press):active {
     font-family: 'Tajawal', sans-serif !important;
   }
 
-  /* خط تجوال في كامل الموقع */
+  /* Tajawal across the ENTIRE UI — overrides Tailwind font-mono, inline monospace,
+     and any other font-family so typography renders Tajawal everywhere. */
   *, *::before, *::after {
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Tajawal', sans-serif !important;
+  }
+  .font-mono, code, pre, kbd, samp {
+    font-family: 'Tajawal', sans-serif !important;
+    font-feature-settings: "tnum" 1;
   }
 
   ::-webkit-scrollbar { width: 4px; height: 4px; }

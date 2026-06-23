@@ -165,7 +165,7 @@ function LeadershipPage() {
     </div>
   );
   return (
-    <div className="relative p-5 space-y-5" style={{ zIndex: 1 }}>
+    <div className="relative p-5 space-y-5 stagger" style={{ zIndex: 1 }}>
       <CinematicBg page="leadership" />
       <HeroBanner page="leadership" title="المؤشرات الرئيسية"
         subtitle="نظرة قيادية شاملة على حالة الخصوصية الوطنية — 29 قطاعاً · 24,983 موقعاً مرصوداً"
@@ -177,57 +177,91 @@ function LeadershipPage() {
         </button>
         ))}
         </>} />
-      <div className="relative rounded-2xl overflow-hidden p-4 space-y-2.5 cs">
-        <InsetFrame />
-        <div className="flex items-center gap-2 flex-wrap">
-        <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground flex-shrink-0">
-        <Filter size={12} style={{ color: GOLD }} /> التصفية:
-        </span>
-        {sectorChips.map(c => (
-        <button key={c.id} onClick={() => toggleFilter(sectorFilter, setSectorFilter, c.id)}
-        className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all"
-        style={{ border: `1px solid ${sectorFilter.includes(c.id) ? GOLD : "var(--border)"}`,
-        background: sectorFilter.includes(c.id) ? `${GOLD}15` : "var(--muted)",
-        color: sectorFilter.includes(c.id) ? GOLD : "var(--muted-foreground)" }}>
-        <c.icon size={10} /> {c.label}
-        </button>
-        ))}
-        <div className="w-px h-4 flex-shrink-0" style={{ background: "var(--border)" }} />
-        {statusChips.map(c => (
-        <button key={c.id} onClick={() => toggleFilter(statusFilter, setStatusFilter, c.id)}
-        className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all"
-        style={{ border: `1px solid ${statusFilter.includes(c.id) ? c.color : "var(--border)"}`,
-        background: statusFilter.includes(c.id) ? `${c.color}14` : "var(--muted)",
-        color: statusFilter.includes(c.id) ? c.color : "var(--muted-foreground)" }}>
-        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: c.color }} />
-        {c.label}
-        </button>
-        ))}
+      {(() => {
+        const activeCount = sectorFilter.length + statusFilter.length + catFilter.length;
+        const FilterGroup = (label: string, GIcon: React.ElementType, children: React.ReactNode) => (
+          <div className="flex items-start gap-3">
+            <div className="flex items-center gap-1.5 pt-1.5 w-[72px] flex-shrink-0">
+              <GIcon size={12} style={{ color: GOLD }} />
+              <span className="text-[11px] font-bold text-muted-foreground">{label}</span>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap flex-1">{children}</div>
+          </div>
+        );
+        return (
+        <div className="glass-card gold-edge relative rounded-2xl overflow-hidden p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="icon-chip w-7 h-7 rounded-lg flex items-center justify-center"
+                style={{ background: `${GOLD}1A`, border: `1px solid ${GOLD}30` }}>
+                <Filter size={13} style={{ color: GOLD }} />
+              </div>
+              <div>
+                <p className="text-[13px] font-black text-foreground leading-none">محرك التصفية الذكي</p>
+                <p className="text-[10px] text-muted-foreground mt-1">تحكّم دقيق في نطاق التحليل</p>
+              </div>
+              {activeCount > 0 && (
+              <span className="ms-1 text-[10px] font-black px-2 py-0.5 rounded-full tabular-nums"
+                style={{ background: `${GOLD}20`, color: GOLD, border: `1px solid ${GOLD}35`, boxShadow: `0 0 12px ${GOLD}25` }}>
+                {activeCount} نشط
+              </span>
+              )}
+            </div>
+            {activeCount > 0 && (
+            <button onClick={() => { setSectorFilter([]); setStatusFilter([]); setCatFilter([]); }}
+              className="chip flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-lg"
+              style={{ color: C_RED, border: `1px solid ${C_RED}30`, background: `${C_RED}10` }}>
+              <Plus size={11} style={{ transform: "rotate(45deg)" }} /> مسح الكل
+            </button>
+            )}
+          </div>
+          <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${GOLD}18, transparent)` }} />
+          {FilterGroup("القطاع", Shield, sectorChips.map((c, i) => { const on = sectorFilter.includes(c.id); return (
+            <button key={c.id} onClick={() => toggleFilter(sectorFilter, setSectorFilter, c.id)}
+              className="chip flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold"
+              style={{ animationDelay: `${i*0.03}s`,
+              border: `1px solid ${on ? GOLD : "var(--border)"}`,
+              background: on ? `linear-gradient(135deg, ${GOLD}22, ${GOLD}0C)` : "var(--muted)",
+              color: on ? GOLD : "var(--muted-foreground)",
+              boxShadow: on ? `0 0 14px ${GOLD}22, inset 0 1px 0 ${GOLD}20` : "none" }}>
+              <c.icon size={11} /> {c.label}
+            </button>
+            ); }))}
+          {FilterGroup("الحالة", Activity, statusChips.map((c, i) => { const on = statusFilter.includes(c.id); return (
+            <button key={c.id} onClick={() => toggleFilter(statusFilter, setStatusFilter, c.id)}
+              className="chip flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold"
+              style={{ animationDelay: `${i*0.03}s`,
+              border: `1px solid ${on ? c.color : "var(--border)"}`,
+              background: on ? `linear-gradient(135deg, ${c.color}22, ${c.color}0C)` : "var(--muted)",
+              color: on ? c.color : "var(--muted-foreground)",
+              boxShadow: on ? `0 0 14px ${c.color}28, inset 0 1px 0 ${c.color}20` : "none" }}>
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: c.color, boxShadow: on ? `0 0 6px ${c.color}` : "none" }} />
+              {c.label}
+            </button>
+            ); }))}
+          {FilterGroup("التصنيف", Layers, catChips.map((c, i) => { const on = catFilter.includes(c); return (
+            <button key={c} onClick={() => toggleFilter(catFilter, setCatFilter, c)}
+              className="chip px-3 py-1.5 rounded-xl text-xs font-bold"
+              style={{ animationDelay: `${i*0.02}s`,
+              border: `1px solid ${on ? GOLD : "var(--border)"}`,
+              background: on ? `linear-gradient(135deg, ${GOLD}22, ${GOLD}0C)` : "var(--muted)",
+              color: on ? GOLD : "var(--muted-foreground)",
+              boxShadow: on ? `0 0 14px ${GOLD}22, inset 0 1px 0 ${GOLD}20` : "none" }}>
+              {c}
+            </button>
+            ); }))}
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-        <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground flex-shrink-0">
-        <Layers size={12} style={{ color: GOLD }} /> التصنيف:
-        </span>
-        {catChips.map(c => (
-        <button key={c} onClick={() => toggleFilter(catFilter, setCatFilter, c)}
-        className="px-3 py-1 rounded-full text-xs font-medium transition-all"
-        style={{ border: `1px solid ${catFilter.includes(c) ? GOLD : "var(--border)"}`,
-        background: catFilter.includes(c) ? `${GOLD}15` : "var(--muted)",
-        color: catFilter.includes(c) ? GOLD : "var(--muted-foreground)" }}>
-        {c}
-        </button>
-        ))}
-        {(sectorFilter.length + statusFilter.length + catFilter.length) > 0 && (
-        <button onClick={() => { setSectorFilter([]); setStatusFilter([]); setCatFilter([]); }}
-        className="px-3 py-1 rounded-full text-xs font-medium text-[#B94A55] hover:opacity-80 transition-all"
-        style={{ border: "1px solid #B94A5530", background: "#B94A5510" }}>
-        ✕ مسح الكل
-        </button>
-        )}
-        </div>
-      </div>
+        );
+      })()}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {OVERVIEW_KPIS.map((k, i) => <KPICard key={i} {...k} />)}
+      </div>
+      <div>
+        <SectionTitle title="حالة الامتثال الوطنية"
+          subtitle="القلب التشغيلي للمنصة — التصنيفات الأربعة الأساسية لحالة امتثال المواقع الوطنية" />
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+          {COMPLIANCE_KPIS.map((c, i) => <ComplianceCard key={c.status} {...c} index={i} />)}
+        </div>
       </div>
       <div className="grid grid-cols-4 gap-4">
         <div className="relative rounded-2xl overflow-hidden p-4 flex flex-col items-center cs"
@@ -255,33 +289,34 @@ function LeadershipPage() {
         ))}
         </div>
         </div>
-        <div className="space-y-2">
-        {COMPLIANCE_KPIS.map((c, i) => {
-        const statusMap: ComplianceStatus[] = ["compliant", "non-compliant", "partial"];
-        return (
-        <div key={i} className="relative rounded-xl p-3 overflow-hidden cursor-pointer hover:scale-[1.01] transition-transform duration-200"
-        style={{ animation: `card-rise 0.4s ease-out ${i * 0.08}s both`,
-        background: `linear-gradient(135deg, var(--card), color-mix(in srgb, var(--card) 90%, ${c.color}))`,
-        border: `1px solid ${c.color}22`, boxShadow: `var(--card-shadow), 0 0 20px ${c.color}08` }}
-        onClick={() => (window as any)._rasidOpenDrill?.(statusMap[i], `المواقع — ${c.label}`, c.color, c.textColor)}>
-        <InsetFrame accent={c.color} />
-        <div className="relative flex items-center justify-between">
-        <div>
-        <div className="text-[22px] font-black tabular-nums leading-none" style={{ color: c.textColor }}>{c.value}</div>
-        <div className="text-[11px] text-muted-foreground mt-0.5">{c.label}</div>
+        {/* Supporting breakdown — distribution bar + compact legend (different format,
+            same data, complements the signature cards above without repeating them) */}
+        <div className="relative rounded-2xl overflow-hidden p-4 cs">
+        <InsetFrame />
+        <p className="text-xs font-semibold text-foreground mb-3 flex items-center gap-1.5">
+        <Layers size={12} style={{ color: GOLD }} /> تفصيل حالة الامتثال
+        </p>
+        <div className="flex w-full h-3 rounded-full overflow-hidden mb-3" style={{ background: "var(--muted)" }}>
+        {COMPLIANCE_KPIS.map((c, i) => (
+        <div key={c.status} className="h-full cc-seg" title={`${c.label} — ${c.pct}%`}
+        style={{ width: `${c.pct}%`, background: c.color, animationDelay: `${i * 0.1}s` }} />
+        ))}
         </div>
-        <div className="relative w-12 h-12 flex-shrink-0">
-        <svg width="48" height="48" viewBox="0 0 48 48" style={{ transform: "rotate(-90deg)" }}>
-        <circle cx="24" cy="24" r="18" fill="none" stroke={c.color} strokeOpacity="0.15" strokeWidth="5"/>
-        <circle cx="24" cy="24" r="18" fill="none" stroke={c.color} strokeWidth="5"
-        strokeDasharray={`${(c.pct/100)*113} 113`} strokeLinecap="round"/>
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black" style={{ color: c.textColor }}>{c.pct}%</div>
+        <div className="space-y-1.5">
+        {COMPLIANCE_KPIS.map(c => (
+        <div key={c.status} onClick={() => (window as any)._rasidOpenDrill?.(c.status, `المواقع — ${c.label}`, c.color, c.textColor)}
+        className="flex items-center justify-between py-1 px-1.5 rounded-lg cursor-pointer hover:bg-muted transition-colors">
+        <span className="flex items-center gap-2 text-[11.5px] text-foreground">
+        <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: c.color }} />
+        {c.label}
+        </span>
+        <span className="flex items-center gap-2">
+        <span className="text-[11px] tabular-nums font-bold text-foreground">{c.value}</span>
+        <span className="text-[10px] tabular-nums font-mono w-8 text-left" style={{ color: c.color }}>{c.pct}%</span>
+        </span>
         </div>
+        ))}
         </div>
-        </div>
-        );
-        })}
         </div>
         <div className="col-span-2 relative rounded-2xl overflow-hidden p-4 cs">
         <InsetFrame />
@@ -673,6 +708,9 @@ function KPIDashboardPage() {
           { label: "متوسط الأداء",       value: "68%",  icon: Award,  color: GOLD    },{ label: "الأهداف المحققة",    value: "17",   icon: CheckCircle2, color: C_GRN },{ label: "المؤشرات النشطة",   value: "86",   icon: Activity, color: TEAL  },{ label: "معدل الامتثال",      value: "72%",  icon: Shield, color: C_AMB },
         ].map((k, i) => <SmallKPI key={i} {...k} delay={i * 0.07} />)}
       </div>
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+        {COMPLIANCE_KPIS.map((c, i) => <ComplianceCard key={c.status} {...c} index={i} />)}
+      </div>
       <div className="space-y-4">
         {groups.map((g, gi) => (
           <PCard key={gi} goldTop className="p-5" style={{ animation: `card-rise 0.4s ease-out ${gi * 0.1}s both` }}>
@@ -717,6 +755,9 @@ function RealTimePage() {
           <Radio size={12} /> تحديث تلقائي
           </button>
           </>} />
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+        {COMPLIANCE_KPIS.map((c, i) => <ComplianceCard key={c.status} {...c} index={i} />)}
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <PCard goldTop className="p-5" style={{ animation: "card-rise 0.4s ease-out 0s both" }}>
           <h3 className="text-sm font-semibold mb-3">
@@ -3730,16 +3771,46 @@ function SiteProfilePage({ onBack }: { onBack: () => void }) {
 function LoadingScreen({onDone}){
   const[pct,setPct]=useState(0);
   useEffect(()=>{let p=0;const iv=setInterval(()=>{p+=Math.random()*8+3;if(p>=100){clearInterval(iv);setPct(100);setTimeout(onDone,500);}else setPct(p);},200);return()=>clearInterval(iv);},[]);
-  return(<div className="fixed inset-0 z-[100] flex flex-col items-center justify-center" style={{background:'radial-gradient(ellipse at 50% 35%,#0B1D38,#04091C)'}}>
-      <div className="relative mb-6" style={{animation:'float-bob 3.5s ease-in-out infinite'}}>
-        <ImageWithFallback src={characterWaving} alt="راصد" className="relative h-44 w-auto object-contain" style={{filter:'drop-shadow(0 12px 32px rgba(197,165,90,0.3))',animation:'logo-glow 3s ease-in-out infinite'}}/>
+  return(<div className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden" style={{background:'radial-gradient(ellipse at 50% 32%,#0C2040,#04091C 72%)'}}>
+      {/* ambient data particles */}
+      {[...Array(7)].map((_,i)=>(
+        <div key={i} style={{position:'absolute',width:`${3+i%2}px`,height:`${3+i%2}px`,borderRadius:'50%',
+          background:i%2?TEAL:GOLD,opacity:0.5,left:`${12+i*12}%`,top:`${18+(i%3)*22}%`,
+          boxShadow:`0 0 8px ${i%2?TEAL:GOLD}`,animation:`particle-up ${5+i*0.8}s ease-in ${i*0.6}s infinite`}}/>
+      ))}
+      {/* Assistant stage: aura + rotating premium ring + orbiting node + character */}
+      <div className="relative mb-8" style={{width:230,height:230}}>
+        <div style={{position:'absolute',inset:0,borderRadius:'50%',
+          background:`radial-gradient(circle, ${GOLD}48 0%, ${GOLD}12 40%, transparent 66%)`,
+          animation:'rasidPulse 3s ease-in-out infinite'}}/>
+        <div style={{position:'absolute',inset:0,borderRadius:'50%',
+          background:`conic-gradient(from 0deg, transparent 0%, ${GOLD}CC 16%, transparent 36%, transparent 62%, ${TEAL}AA 80%, transparent 98%)`,
+          WebkitMask:'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px))',
+          mask:'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px))',
+          animation:'orbit-ring 3.2s linear infinite'}}/>
+        <div style={{position:'absolute',inset:16,borderRadius:'50%',border:`1px dashed ${GOLD}33`,animation:'orbit-ring-r 20s linear infinite'}}/>
+        <div style={{position:'absolute',inset:0,animation:'orbit-ring 3.2s linear infinite'}}>
+          <div style={{position:'absolute',top:-5,left:'50%',marginLeft:-5,width:10,height:10,borderRadius:'50%',
+            background:GOLD,boxShadow:`0 0 14px ${GOLD}, 0 0 4px ${GOLD}`}}/>
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center" style={{animation:'float-bob 3.8s ease-in-out infinite'}}>
+          <ImageWithFallback src={characterWaving} alt="راصد المساعد الوطني" className="object-contain"
+            style={{maxHeight:'178px',width:'auto',filter:'drop-shadow(0 12px 30px rgba(0,0,0,0.55))'}}/>
+        </div>
+        <span className="absolute" style={{bottom:30,right:34,width:14,height:14,borderRadius:'50%',
+          background:C_EMR,border:'2px solid #04091C',boxShadow:'0 0 10px #3DBF7A',animation:'status-blink 1.6s ease-in-out infinite'}}/>
       </div>
-      <div className="mb-8"><RasidLogo variant="gold" className="h-20 w-auto" animate/></div>
+      <div className="mb-3"><RasidLogo className="h-14 w-auto"/></div>
+      <p className="text-xs mb-6" style={{color:'rgba(255,255,255,0.52)'}}>جارٍ تحضير منصة الرصد الوطنية…</p>
       <div className="w-72">
         <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:'rgba(255,255,255,0.08)'}}>
-          <div style={{width:Math.min(100,pct)+'%',height:'100%',borderRadius:'9999px',background:'linear-gradient(90deg,#C5A55A,#E1C978)',transition:'width 0.3s'}}/>
+          <div style={{width:Math.min(100,pct)+'%',height:'100%',borderRadius:'9999px',
+            background:`linear-gradient(90deg,${GOLD},${GOLD_PALE})`,boxShadow:`0 0 12px ${GOLD}90`,transition:'width 0.3s'}}/>
         </div>
-        <p className="text-center text-xs text-slate-400 mt-3">{Math.round(Math.min(100,pct))}%</p>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-[10px]" style={{color:'rgba(255,255,255,0.4)'}}>تهيئة النظام الذكي</span>
+          <span className="text-[11px] font-bold tabular-nums" style={{color:GOLD}}>{Math.round(Math.min(100,pct))}%</span>
+        </div>
       </div>
       <p className="absolute bottom-8 text-[10px] tracking-widest uppercase" style={{color:'rgba(197,165,90,0.5)'}}>منصة راصد · NDMO</p>
     </div>);
