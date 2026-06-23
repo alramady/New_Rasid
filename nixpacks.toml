@@ -8,4 +8,4 @@
 cmds = ["npm install -g pnpm", "pnpm install --no-frozen-lockfile"]
 
 [phases.build]
-cmds = ["pnpm add serve@14.2.4", "pnpm run build"]
+cmds = ["pnpm add -w serve@14.2.4", "pnpm run build"]
