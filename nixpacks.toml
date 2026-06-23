@@ -5,7 +5,7 @@
 # missing or out of sync with package.json.
 
 [phases.install]
-cmds = ["pnpm install --no-frozen-lockfile"]
+cmds = ["npm install -g pnpm", "pnpm install --no-frozen-lockfile"]
 
 [phases.build]
 cmds = ["pnpm add serve@14.2.4", "pnpm run build"]
