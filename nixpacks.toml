@@ -8,4 +8,6 @@
 cmds = ["npm install -g pnpm", "pnpm install --no-frozen-lockfile"]
 
 [phases.build]
-cmds = ["pnpm add serve@14.2.4", "pnpm run build"]
+# -w: this repo is a pnpm workspace (pnpm-workspace.yaml), so adding to the
+# root must be explicit or pnpm v9 aborts with ERR_PNPM_ADDING_TO_ROOT.
+cmds = ["pnpm add serve@14.2.4 -w", "pnpm run build"]
