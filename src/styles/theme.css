@@ -1,0 +1,396 @@
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Animation Keyframes — Rasid Platform Motion System ─── */
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes rasidPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.08); }
+}
+@keyframes orbit-ring {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes orbit-ring-r {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes neural-pulse {
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(1.5); }
+}
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes scan-sweep {
+  0%   { opacity: 0; transform: translateY(-60%); }
+  15%  { opacity: 0.45; }
+  85%  { opacity: 0.45; }
+  100% { opacity: 0; transform: translateY(100vh); }
+}
+@keyframes float-bob {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+@keyframes shimmer-pulse {
+  0%, 100% { opacity: 0.15; }
+  50%       { opacity: 0.55; }
+}
+@keyframes card-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hero-reveal {
+  from { opacity: 0; transform: scale(0.98) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes count-pop {
+  from { opacity: 0; transform: scale(0.8) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes glow-border {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50%       { box-shadow: 0 0 24px 4px rgba(197,165,90,0.22); }
+}
+@keyframes data-flow {
+  from { transform: translateX(100%); opacity: 0; }
+  20%  { opacity: 0.55; }
+  80%  { opacity: 0.55; }
+  to   { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes shield-pulse {
+  0%, 100% { opacity: 0.08; transform: scale(1); }
+  50%       { opacity: 0.22; transform: scale(1.05); }
+}
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  25%  { opacity: 0.6; }
+  75%  { opacity: 0.6; }
+  100% { transform: translateX(160%) skewX(-18deg); opacity: 0; }
+}
+@keyframes logo-glow {
+  0%, 100% { opacity: 0.25; transform: scale(1); filter: blur(18px); }
+  50%       { opacity: 0.55; transform: scale(1.12); filter: blur(24px); }
+}
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-4px) scale(1.012); }
+}
+@keyframes scan-pulse-ring {
+  0%   { transform: scale(0.95); opacity: 0.7; }
+  100% { transform: scale(1.6);  opacity: 0; }
+}
+/* Cinematic data-stream moving lines */
+@keyframes stream-rtl {
+  from { transform: translateX(110%); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  to   { transform: translateX(-110%); opacity: 0; }
+}
+/* Rotating hexagonal grid */
+@keyframes hex-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* Particle float up */
+@keyframes particle-up {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  10%  { opacity: 0.8; }
+  90%  { opacity: 0.8; }
+  100% { transform: translateY(-80vh) scale(0.4); opacity: 0; }
+}
+/* Ink drop expand */
+@keyframes ink-expand {
+  from { transform: scale(0); opacity: 0.7; }
+  to   { transform: scale(4); opacity: 0; }
+}
+/* SDAIA pulse */
+@keyframes sdaia-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.04); }
+}
+
+/* ═══ LOGO PREMIUM ANIMATION SYSTEM ══════════════════════════════════════ */
+/* NOTE: filter is static on the element; animations only use transform+opacity
+   to avoid browser keyframe interpolation failures with complex filter lists */
+
+/* 1. الأنيميشن الرئيسي — 2D فقط، يعمل داخل overflow-hidden */
+@keyframes logo-breathe-gold {
+  0%   { transform: scale(1)     translateY(0px)   rotate(0deg); }
+  20%  { transform: scale(1.08)  translateY(-8px)  rotate(0.8deg); }
+  40%  { transform: scale(1.03)  translateY(-3px)  rotate(-0.5deg); }
+  60%  { transform: scale(1.10)  translateY(-7px)  rotate(0.6deg); }
+  80%  { transform: scale(1.02)  translateY(-2px)  rotate(-0.3deg); }
+  100% { transform: scale(1)     translateY(0px)   rotate(0deg); }
+}
+
+/* 2. هالة ذهبية — opacity فقط، آمن دائماً */
+@keyframes logo-glow-pulse {
+  0%, 100% { opacity: 0.18; }
+  40%       { opacity: 0.60; }
+}
+
+/* 3. ومضة الشعار الذهبية */
+@keyframes logo-shimmer-burst {
+  0%   { transform: translateX(-170%) skewX(-22deg); opacity: 0; }
+  15%  { opacity: 0.9; }
+  85%  { opacity: 0.9; }
+  100% { transform: translateX(170%) skewX(-22deg); opacity: 0; }
+}
+
+/* 4. ملاحظة: logo-3d-tilt و logo-ring-pulse محذوفان —
+   لا يعملان داخل overflow:hidden الخاص بـ sidebar */
+
+/* 6. Character floating animation variants */
+@keyframes char-float-idle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  30%       { transform: translateY(-8px) rotate(0.5deg); }
+  70%       { transform: translateY(-4px) rotate(-0.5deg); }
+}
+@keyframes char-pulse-glow {
+  0%, 100% { opacity: 0.20; transform: scale(1); }
+  50%       { opacity: 0.50; transform: scale(1.12); }
+}
+/* Card alive — subtle breathing */
+@keyframes card-breathe {
+  0%, 100% { box-shadow: var(--card-shadow); }
+  50%       { box-shadow: var(--card-shadow-lg); }
+}
+/* HUD command-language motion */
+@keyframes hud-scanline {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.5; }
+  100% { transform: translateY(2000%); opacity: 0; }
+}
+@keyframes bracket-in {
+  from { opacity: 0; transform: scale(1.15); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes status-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+@keyframes ticker-dash {
+  to { stroke-dashoffset: -1000; }
+}
+@keyframes skeleton-shine {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:root {
+  --font-size: 16px;
+  /* Light mode: ابيض نقي مع أزرق ملكي داكن كلون هوية */
+  --background: #FFFFFF;
+  --foreground: #040B2E;
+  --card: #FFFFFF;
+  --card-foreground: #040B2E;
+  --popover: #FFFFFF;
+  --popover-foreground: #040B2E;
+  --primary: #040B2E;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EEF2FF;
+  --secondary-foreground: #040B2E;
+  --muted: #F0F4FF;
+  --muted-foreground: #4A5880;
+  --accent: #C5A55A;
+  --accent-foreground: #040B2E;
+  --destructive: #B94A55;
+  --destructive-foreground: #ffffff;
+  --border: rgba(4, 11, 46, 0.10);
+  --input: transparent;
+  --input-background: #F0F4FF;
+  --switch-background: #C5A55A;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: #C5A55A;
+  --card-shadow: 0 1px 3px rgba(4,11,46,0.06), 0 6px 20px rgba(4,11,46,0.07);
+  --card-shadow-lg: 0 2px 6px rgba(4,11,46,0.07), 0 16px 40px rgba(4,11,46,0.09);
+  --panel-bg: rgba(255,255,255,0.80);
+  --chart-1: #C5A55A;
+  --chart-2: #1E9E57;
+  --chart-3: #3DB1AC;
+  --chart-4: #C78B2C;
+  --chart-5: #7C6BAE;
+  --radius: 0.875rem;
+  /* Sidebar: الأزرق الملكي الداكن في كلا الوضعين */
+  --sidebar: #040B2E;
+  --sidebar-foreground: #E6E2D6;
+  --sidebar-primary: #C5A55A;
+  --sidebar-primary-foreground: #040B2E;
+  --sidebar-accent: rgba(197,165,90,0.14);
+  --sidebar-accent-foreground: #C5A55A;
+  --sidebar-border: rgba(197,165,90,0.12);
+  --sidebar-ring: #C5A55A;
+}
+
+.dark {
+  /* Dark mode: أزرق ملكي داكن جداً — اللون السائد في كل السطوح */
+  --background: #04091C;
+  --foreground: #E6E2D6;
+  --card: #07102E;
+  --card-foreground: #E6E2D6;
+  --popover: #07102E;
+  --popover-foreground: #E6E2D6;
+  --primary: #C5A55A;
+  --primary-foreground: #04091C;
+  --secondary: #0B1640;
+  --secondary-foreground: #E6E2D6;
+  --muted: #0B1640;
+  --muted-foreground: #5A6E96;
+  --accent: #C5A55A;
+  --accent-foreground: #04091C;
+  --destructive: #B94A55;
+  --destructive-foreground: #fecaca;
+  --border: rgba(197, 165, 90, 0.13);
+  --input: #0B1640;
+  --input-background: #0B1640;
+  --switch-background: #C5A55A;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: #C5A55A;
+  --chart-1: #C5A55A;
+  --chart-2: #1E9E57;
+  --chart-3: #3DB1AC;
+  --chart-4: #C78B2C;
+  --chart-5: #7C6BAE;
+  --card-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.30);
+  --card-shadow-lg: 0 24px 70px rgba(0,0,0,0.55), 0 4px 14px rgba(0,0,0,0.38);
+  --panel-bg: rgba(7,16,46,0.82);
+  /* Sidebar: نفس الأزرق الملكي الداكن */
+  --sidebar: #040B2E;
+  --sidebar-foreground: #E6E2D6;
+  --sidebar-primary: #C5A55A;
+  --sidebar-primary-foreground: #04091C;
+  --sidebar-accent: rgba(197,165,90,0.14);
+  --sidebar-accent-foreground: #C5A55A;
+  --sidebar-border: rgba(197,165,90,0.12);
+  --sidebar-ring: #C5A55A;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Tajawal', sans-serif !important;
+  }
+
+  /* خط تجوال في كامل الموقع */
+  *, *::before, *::after {
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.4); }
+  * { scrollbar-width: thin; scrollbar-color: rgba(201,168,76,0.25) transparent; }
+
+  /**
+  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
+  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
+  */
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+}
