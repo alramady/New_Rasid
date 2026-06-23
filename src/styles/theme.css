@@ -141,8 +141,66 @@
   100% { transform: translateX(170%) skewX(-22deg); opacity: 0; }
 }
 
-/* 4. ملاحظة: logo-3d-tilt و logo-ring-pulse محذوفان —
-   لا يعملان داخل overflow:hidden الخاص بـ sidebar */
+/* 4. Logo heartbeat — أكثر درامية ووضوحاً */
+@keyframes logo-heartbeat {
+  0%   { transform: scale(1)     translateY(0px)    rotate(0deg); }
+  12%  { transform: scale(1.10)  translateY(-8px)   rotate(1deg); }
+  24%  { transform: scale(1.04)  translateY(-3px)   rotate(-0.6deg); }
+  36%  { transform: scale(1.12)  translateY(-9px)   rotate(1.2deg); }
+  55%  { transform: scale(1.02)  translateY(-1px)   rotate(-0.3deg); }
+  72%  { transform: scale(1.09)  translateY(-7px)   rotate(0.8deg); }
+  88%  { transform: scale(1.01)  translateY(-1px)   rotate(-0.2deg); }
+  100% { transform: scale(1)     translateY(0px)    rotate(0deg); }
+}
+
+/* 5. Cinematic radar sweep */
+@keyframes radar-arm {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* 6. Neural line draw */
+@keyframes neural-draw {
+  0%   { stroke-dashoffset: 120; opacity: 0; }
+  15%  { opacity: 0.7; }
+  85%  { opacity: 0.7; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+/* 7. Hex grid slow spin */
+@keyframes hex-drift {
+  from { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(30deg) scale(1.05); }
+  to   { transform: rotate(60deg) scale(1); }
+}
+/* 8. Circuit pulse along trace */
+@keyframes trace-pulse {
+  0%, 100% { stroke-dashoffset: 100; opacity: 0; }
+  40%       { stroke-dashoffset: 0;   opacity: 0.7; }
+  60%       { stroke-dashoffset: 0;   opacity: 0.7; }
+}
+/* 9. Scan ping expand */
+@keyframes scan-ping {
+  0%   { transform: scale(0); opacity: 0.9; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+/* 10. Data river — vertical falling data */
+@keyframes data-fall {
+  from { transform: translateY(-120%); opacity: 0; }
+  5%   { opacity: 0.7; }
+  95%  { opacity: 0.7; }
+  to   { transform: translateY(120vh); opacity: 0; }
+}
+/* 11. Premium card hover — GPU only */
+@keyframes card-hover-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-3px) scale(1.005); }
+}
+/* 12. Card shimmer on enter */
+@keyframes card-shimmer-enter {
+  from { transform: translateX(-180%) skewX(-20deg); opacity: 0; }
+  20%  { opacity: 0.7; }
+  80%  { opacity: 0.7; }
+  to   { transform: translateX(180%) skewX(-20deg); opacity: 0; }
+}
 
 /* 6. Character floating animation variants */
 @keyframes char-float-idle {
@@ -182,13 +240,252 @@
   100% { background-position: -200% 0; }
 }
 
-/* Respect reduced-motion preference */
+/* ─── Premium card interactions ─────────────────────────── */
+.pcard-interactive {
+  transition: transform 0.26s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.30s ease,
+              border-color 0.30s ease;
+}
+.pcard-interactive:hover {
+  transform: translateY(-5px) scale(1.008);
+  /* Gentle shadow expansion + subtle gold edge glow on hover */
+  box-shadow: var(--card-shadow-lg), 0 0 0 1px rgba(197,165,90,0.18), 0 0 32px rgba(197,165,90,0.10) !important;
+}
+/* Elegant light sweep across cards on hover */
+.pcard-interactive::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,252,220,0.10) 48%, rgba(197,165,90,0.06) 52%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.22,0.61,0.36,1);
+  z-index: 5;
+}
+.pcard-interactive:hover::after {
+  transform: translateX(120%);
+}
+
+/* ─── Premium icon container ────────────────────────────── */
+.icon-chip {
+  transition: transform 0.24s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.24s ease;
+}
+.group:hover .icon-chip,
+.pcard-interactive:hover .icon-chip {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+/* ─── Glassmorphism depth surface ───────────────────────── */
+.glass {
+  background: var(--panel-bg);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid rgba(197,165,90,0.14);
+}
+
+/* ─── Premium focus-visible ring (accessibility + polish) ── */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px rgba(197,165,90,0.55);
+  border-radius: 8px;
+}
+
+/* ─── Staggered entrance reveal system ──────────────────── */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes reveal-up-lg {
+  from { opacity: 0; transform: translateY(26px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.reveal { animation: reveal-up-lg 0.6s cubic-bezier(0.22,0.61,0.36,1) both; }
+.stagger > * { animation: reveal-up-lg 0.6s cubic-bezier(0.22,0.61,0.36,1) both; }
+.stagger > *:nth-child(1)  { animation-delay: 0.06s; }
+.stagger > *:nth-child(2)  { animation-delay: 0.14s; }
+.stagger > *:nth-child(3)  { animation-delay: 0.22s; }
+.stagger > *:nth-child(4)  { animation-delay: 0.30s; }
+.stagger > *:nth-child(5)  { animation-delay: 0.38s; }
+.stagger > *:nth-child(6)  { animation-delay: 0.46s; }
+.stagger > *:nth-child(7)  { animation-delay: 0.54s; }
+.stagger > *:nth-child(8)  { animation-delay: 0.62s; }
+.stagger > *:nth-child(9)  { animation-delay: 0.70s; }
+.stagger > *:nth-child(n+10) { animation-delay: 0.76s; }
+/* The cinematic background layer must never slide/fade with content */
+.stagger > .absolute:first-child { animation: none !important; opacity: 1 !important; }
+
+/* ─── Premium button micro-interaction ──────────────────── */
+.btn-press {
+  transition: transform 0.16s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.20s ease, opacity 0.18s ease;
+}
+.btn-press:hover { transform: translateY(-1px); }
+.btn-press:active { transform: translateY(0) scale(0.97); }
+
+/* ─── Global button click feedback (platform-wide) ──────── */
+/* Every native button gets subtle, premium tactile feedback.
+   Opt out with .no-press on any button that manages its own transform. */
+button:not(.no-press) {
+  transition: transform 0.16s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.20s ease, opacity 0.18s ease,
+              background-color 0.20s ease, color 0.20s ease, border-color 0.20s ease;
+}
+button:not(.no-press):active {
+  transform: scale(0.97);
+}
+
+/* ─── Ultra-premium card surface upgrade ────────────────── */
+/* Applies layered depth + a soft gradient sheen to every .cs card. */
+.cs {
+  position: relative;
+  background:
+    linear-gradient(160deg, rgba(197,165,90,0.045) 0%, transparent 40%),
+    var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.30s ease, border-color 0.30s ease, transform 0.26s cubic-bezier(0.34,1.56,0.64,1);
+}
+.cs:hover {
+  box-shadow: var(--card-shadow-lg), 0 0 26px rgba(197,165,90,0.10);
+  border-color: rgba(197,165,90,0.34);
+  transform: translateY(-3px);
+}
+.cs-muted { background: var(--muted); }
+.cs-input { background: var(--input-background); border: 1px solid var(--border); }
+
+/* Elevated premium surface for modals / floating panels */
+.glass-card {
+  position: relative;
+  background:
+    linear-gradient(160deg, rgba(197,165,90,0.06) 0%, transparent 40%),
+    var(--panel-bg);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid rgba(197,165,90,0.20);
+  box-shadow: var(--card-shadow-lg), 0 0 60px rgba(197,165,90,0.06);
+}
+/* Refined gold hairline that can top any premium surface */
+.gold-edge::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(197,165,90,0.85), rgba(225,201,120,0.95), rgba(197,165,90,0.85), transparent);
+  z-index: 6;
+}
+
+/* ─── Scroll-reveal (progressive, CSS-only) ─────────────── */
+/* Uses scroll-driven animations where supported; degrades to
+   visible (no-op) elsewhere so content is never hidden. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-scroll {
+      animation: reveal-up 0.7s cubic-bezier(0.22,0.61,0.36,1) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+/* ─── Soft accent tint helpers (calmer than raw hex) ────── */
+.tint-gold { background: rgba(197,165,90,0.10); }
+.tint-teal { background: rgba(61,177,172,0.10); }
+.ring-soft { box-shadow: 0 0 0 1px rgba(197,165,90,0.14); }
+
+/* ─── Slow cinematic mesh-gradient drift ────────────────── */
+@keyframes mesh-drift {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(4%,-3%) scale(1.06); }
+  66%  { transform: translate(-3%,4%) scale(1.03); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+/* Slow horizontal scan beam across page backgrounds */
+@keyframes bg-scan-x {
+  0%   { transform: translateX(-120%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(120vw); opacity: 0; }
+}
+
+/* Sidebar active-item indicator: gentle breathing height + glow */
+@keyframes nav-ind {
+  0%, 100% { height: 42%; opacity: 0.7; }
+  50%      { height: 66%; opacity: 1; }
+}
+/* Sidebar active-item one-shot light sweep */
+@keyframes nav-sweep {
+  from { background-position: 180% 0; }
+  to   { background-position: -90% 0; }
+}
+
+/* Cinematic edge vignette — subtle, must NOT mute edge glow orbs */
+.bg-vignette { box-shadow: inset 0 0 140px 10px rgba(4,11,46,0.04); }
+.dark .bg-vignette { box-shadow: inset 0 0 150px 12px rgba(4,9,28,0.16); }
+
+/* ─── Animated Rasid logo system (clearly visible) ──────── */
+.rl-anim {
+  animation: rl-breathe 3.4s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes rl-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.055); }
+}
+.rl-glow {
+  position: absolute;
+  inset: -34% -18%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse, rgba(210,178,98,0.65) 0%, rgba(197,165,90,0.30) 38%, transparent 66%);
+  filter: blur(12px);
+  animation: rl-glow-pulse 2.6s ease-in-out infinite;
+}
+@keyframes rl-glow-pulse {
+  0%, 100% { opacity: 0.40; transform: scale(0.88); }
+  50%      { opacity: 0.95; transform: scale(1.16); }
+}
+/* Light sweep that travels along the calligraphy strokes (masked to the glyph) */
+.rl-sweep {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  background: linear-gradient(100deg, transparent 38%, rgba(255,250,225,0.55) 47%, rgba(255,255,255,0.95) 50%, rgba(255,250,225,0.55) 53%, transparent 62%);
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  animation: rl-sweep-move 3s ease-in-out 0.3s infinite;
+}
+@keyframes rl-sweep-move {
+  0%        { background-position: 180% 0; }
+  55%, 100% { background-position: -90% 0; }
+}
+/* ────────────────────────────────────────────────────────── */
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+  .pcard-interactive:hover { transform: none; }
+  .pcard-interactive::after { display: none; }
+  .cs:hover, .glass-card:hover { transform: none; }
+  button:not(.no-press):active { transform: none; }
+  .stagger > *, .reveal, .reveal-scroll { animation: none !important; opacity: 1 !important; }
+  .rl-anim { animation: none !important; }
+  .rl-sweep { display: none !important; }
+  .rl-glow { animation: none !important; opacity: 0.4 !important; transform: none !important; }
 }
 
 :root {
@@ -267,9 +564,9 @@
   --chart-3: #3DB1AC;
   --chart-4: #C78B2C;
   --chart-5: #7C6BAE;
-  --card-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.30);
-  --card-shadow-lg: 0 24px 70px rgba(0,0,0,0.55), 0 4px 14px rgba(0,0,0,0.38);
-  --panel-bg: rgba(7,16,46,0.82);
+  --card-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.30), inset 0 1px 0 rgba(197,165,90,0.07);
+  --card-shadow-lg: 0 24px 70px rgba(0,0,0,0.55), 0 4px 14px rgba(0,0,0,0.38), inset 0 1px 0 rgba(197,165,90,0.09);
+  --panel-bg: rgba(7,16,46,0.78);
   /* Sidebar: نفس الأزرق الملكي الداكن */
   --sidebar: #040B2E;
   --sidebar-foreground: #E6E2D6;
@@ -321,6 +618,11 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+
+/* Utility shorthand classes to reduce JSX inline style verbosity */
+.cs { background: var(--card); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+.cs-muted { background: var(--muted); }
+.cs-input { background: var(--input-background); border: 1px solid var(--border); }
 
 @layer base {
   * {
